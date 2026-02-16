@@ -74,6 +74,15 @@ async function setupPythonEnvironment(editor, pythonApi) {
     if (enablePep723 && filePath.endsWith(".py") && hasPep723Metadata(filePath)) {
         const pythonPath = await getUvScriptPythonPath(filePath);
         if (pythonPath) {
+            if (!fs.existsSync(pythonPath)) {
+                if (showNotifications) {
+                    vscode.window.showInformationMessage(
+                        "Python Envy: PEP 723 script environment has not been created yet."
+                    );
+                }
+                return;
+            }
+
             const currentPythonPath =
                 pythonApi.environments.getActiveEnvironmentPath(
                     currentWorkspaceFolder ? currentWorkspaceFolder.uri : undefined
